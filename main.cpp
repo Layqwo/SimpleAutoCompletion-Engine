@@ -1,15 +1,47 @@
 #include "AutoCompleter.h"
+#include "FileHandler.h"
 #include <iostream>
 
 int main(int argc, char** argv) {
-	AutoCompleter::AddWord("m_WordsAdded");
-	AutoCompleter::AddWord("m_Root");
-	AutoCompleter::AddWord("Yep!");
-	AutoCompleter::AddWord("Morphling");
+	if (argc < 3 || (argc <= 3 && (argv[2] == std::string("Add") && argv[2] == std::string("Complete")))) {
+		std::cout << "\tERROR: Not enough parametrs" << std::endl;
+		return -1;
+	}
 
-	std::vector<std::string> foundWords = AutoCompleter::Complete("m_WordsAdded");
-	for (int i = 0; i < foundWords.size(); i++) {
-		std::cout << foundWords[i] << std::endl;
+	bool fileOpened = true;
+	try {
+		LoadAutoCompleter(argv[1]);
+	}
+	catch (std::exception) {
+		fileOpened = false;
+	}
+
+	if (fileOpened) {
+		if (std::string("View") == argv[2]) {
+			std::cout << "\t|File's " << argv[1] << " contents:" << std::endl;
+			for (int i = 0; i < AutoCompleter::GetAddedWords().size(); i++) {
+				std::cout << "\t\t" << AutoCompleter::GetAddedWords()[i] << std::endl;
+			}
+		}
+		else if (std::string("Add") == argv[2]) {
+			AutoCompleter::AddWord(argv[3]);
+			UnloadAutoCompleter(argv[1]);
+		}
+		else if (std::string("Complete") == argv[2]) {
+			std::vector<std::string> foundWords = AutoCompleter::Complete(argv[3]);
+			std::cout << "\t|Results:" << std::endl;
+			for (int i = 0; i < foundWords.size(); i++) {
+				std::cout << "\t\t" << foundWords[i] << std::endl;
+			}
+		}
+		else {
+			std::cout << "\tERROR: Unknown command" << std::endl;
+			return -1;
+		}
+	}
+	else {
+		std::cout << "\tERROR: Couldn't open the file " << argv[1] << std::endl;
+		return -1;
 	}
 	return 0;
 }
