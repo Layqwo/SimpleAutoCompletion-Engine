@@ -6,6 +6,6 @@ Commands:
     
     .\AutoCompletion <File Path> Add <Word> - To add to the file
     
-    .\AutoCompletion <File Path> Complete <Word> - Return a list of the completed words
+    .\AutoCompletion <File Path> Complete <Word> - To return a list of the completed words
 
 File contains all the words known to the AutoCompleter!
