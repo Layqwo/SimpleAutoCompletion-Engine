@@ -7,6 +7,7 @@ class PrefixTreeNode {
 	friend class AutoCompleter;
 private:
 	char m_Value;
+	bool m_EndOfWord;
 	std::unordered_map<char, PrefixTreeNode*> m_Children;
 
 	PrefixTreeNode();
@@ -20,10 +21,10 @@ private:
 class AutoCompleter {
 private:
 	static PrefixTreeNode* m_Root;
-	static std::vector<std::string> m_WordsAdded;
 
 	static void DestroyRecursive(PrefixTreeNode* treeNode);
 	static void Complete(PrefixTreeNode* currentNode, std::vector<std::string>& ans, std::string word, std::string currentWord, int currentIndex);
+	static void GetAddedWords(PrefixTreeNode* currentNode, std::string currentString, std::vector<std::string>& ans);
 public:
 	AutoCompleter();
 	~AutoCompleter();
@@ -31,6 +32,6 @@ public:
 	static void AddWord(std::string word);
 	static std::vector<std::string> Complete(std::string word);
 
-	static const std::vector<std::string>& GetAddedWords();
+	static const std::vector<std::string> GetAddedWords();
 };
 

@@ -2,6 +2,7 @@
 
 PrefixTreeNode::PrefixTreeNode() {
 	m_Value = '\0';
+	m_EndOfWord = false;
 	m_Children = std::unordered_map<char, PrefixTreeNode*>();
 }
 
@@ -24,7 +25,6 @@ PrefixTreeNode* PrefixTreeNode::GetChild(char value) {
 /////////////////////////////////////////////////////////////////////////////
 
 PrefixTreeNode* AutoCompleter::m_Root;
-std::vector<std::string> AutoCompleter::m_WordsAdded;
 AutoCompleter mainAutoCompleter = AutoCompleter();
 
 void AutoCompleter::DestroyRecursive(PrefixTreeNode* treeNode) {
@@ -48,13 +48,24 @@ void AutoCompleter::Complete(PrefixTreeNode* currentNode, std::vector<std::strin
 		}
 	}
 	else {
-		if (std::find(m_WordsAdded.begin(), m_WordsAdded.end(), currentWord) != m_WordsAdded.end())
+		if (currentNode->m_EndOfWord)
 			ans.push_back(currentWord);
 
 		for (auto dictValue : currentNode->m_Children) {
 			AutoCompleter::Complete(dictValue.second, ans, word, currentWord + dictValue.first, currentIndex);
 		}
 	}
+}
+
+void AutoCompleter::GetAddedWords(PrefixTreeNode* currentNode, std::string currentString, std::vector<std::string>& ans) {
+	if (currentNode != m_Root) {
+		currentString += currentNode->m_Value;
+		if (currentNode->m_EndOfWord)
+			ans.push_back(currentString);
+	}
+
+	for (auto dictValue : currentNode->m_Children)
+		AutoCompleter::GetAddedWords(dictValue.second, currentString, ans);
 }
 
 AutoCompleter::AutoCompleter() {
@@ -67,17 +78,16 @@ AutoCompleter::~AutoCompleter() {
 }
 
 void AutoCompleter::AddWord(std::string word) {
-	PrefixTreeNode* currentNode = m_Root;
-	for (int i = 0; i < word.size(); i++) {
-		if (currentNode->ContainsChild(word[i]))
-			currentNode = currentNode->GetChild(word[i]);
-		else {
-			currentNode = currentNode->AddChild(word[i]);
+	if (word.size() > 0) {
+		PrefixTreeNode* currentNode = m_Root;
+		for (int i = 0; i < word.size(); i++) {
+			if (currentNode->ContainsChild(word[i]))
+				currentNode = currentNode->GetChild(word[i]);
+			else
+				currentNode = currentNode->AddChild(word[i]);
 		}
+		currentNode->m_EndOfWord = true;
 	}
-
-	if (std::find(m_WordsAdded.begin(), m_WordsAdded.end(), word) == m_WordsAdded.end())
-		m_WordsAdded.push_back(word);
 }
 
 std::vector<std::string> AutoCompleter::Complete(std::string word) {
@@ -86,8 +96,10 @@ std::vector<std::string> AutoCompleter::Complete(std::string word) {
 	return ans;
 }
 
-const std::vector<std::string>& AutoCompleter::GetAddedWords() {
-	return m_WordsAdded;
+const std::vector<std::string> AutoCompleter::GetAddedWords() {
+	std::vector<std::string> ans = std::vector<std::string>();
+	AutoCompleter::GetAddedWords(m_Root, "", ans);
+	return ans;
 }
 
 
