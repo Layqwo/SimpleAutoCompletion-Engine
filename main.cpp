@@ -3,7 +3,7 @@
 #include <iostream>
 
 int main(int argc, char** argv) {
-	if (argc < 3 || (argc <= 3 && (argv[2] == std::string("Add") && argv[2] == std::string("Complete")))) {
+	if (argc < 3 || (argc <= 3 && (argv[2] == std::string("Add") || argv[2] == std::string("Complete")))) {
 		std::cout << "\tERROR: Not enough parametrs" << std::endl;
 		return -1;
 	}
@@ -17,10 +17,12 @@ int main(int argc, char** argv) {
 	}
 
 	if (fileOpened) {
+		setlocale(LC_ALL, "Ru");
 		if (std::string("View") == argv[2]) {
+			std::vector<std::string> addedWords = AutoCompleter::GetAddedWords();
 			std::cout << "\t|File's " << argv[1] << " contents:" << std::endl;
-			for (int i = 0; i < AutoCompleter::GetAddedWords().size(); i++) {
-				std::cout << "\t\t" << AutoCompleter::GetAddedWords()[i] << std::endl;
+			for (int i = 0; i < addedWords.size(); i++) {
+				std::cout << "\t\t" << addedWords[i] << std::endl;
 			}
 		}
 		else if (std::string("Add") == argv[2]) {
