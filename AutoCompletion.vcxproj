@@ -128,8 +128,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AutoCompleter.h" />
+    <ClInclude Include="FileHandler.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FileHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="AutoCompleter.cpp" />
   </ItemGroup>
