@@ -1,4 +1,5 @@
 #include "AutoCompleter.h"
+#include <algorithm>
 
 PrefixTreeNode::PrefixTreeNode() {
 	m_Value = '\0';
@@ -90,15 +91,52 @@ void AutoCompleter::AddWord(std::string word) {
 	}
 }
 
+void AutoCompleter::EraseWord(std::string word) {
+	if (word.size() > 0) {
+		PrefixTreeNode* currentNode = m_Root;
+		bool containsWord = true;
+		for (int i = 0; i < word.size() && containsWord; i++) {
+			if (currentNode->ContainsChild(word[i]))
+				currentNode = currentNode->GetChild(word[i]);
+			else
+				containsWord = false;
+		}
+
+		if (containsWord && currentNode->m_EndOfWord)
+			currentNode->m_EndOfWord = false;
+		else
+			throw std::exception();
+	}
+}
+
+bool AutoCompleter::Contains(std::string word) {
+	if (word.size() > 0) {
+		PrefixTreeNode* currentNode = m_Root;
+		bool containsWord = true;
+		for (int i = 0; i < word.size() && containsWord; i++) {
+			if (currentNode->ContainsChild(word[i]))
+				currentNode = currentNode->GetChild(word[i]);
+			else
+				containsWord = false;
+		}
+
+		if (containsWord && currentNode->m_EndOfWord)
+			return true;
+	}
+	return false;
+}
+
 std::vector<std::string> AutoCompleter::Complete(std::string word) {
 	std::vector<std::string> ans = std::vector<std::string>();
 	AutoCompleter::Complete(m_Root, ans, word, std::string(""), 0);
+	std::sort(ans.begin(), ans.end());
 	return ans;
 }
 
 const std::vector<std::string> AutoCompleter::GetAddedWords() {
 	std::vector<std::string> ans = std::vector<std::string>();
 	AutoCompleter::GetAddedWords(m_Root, "", ans);
+	std::sort(ans.begin(), ans.end());
 	return ans;
 }
 

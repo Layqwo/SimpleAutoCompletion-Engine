@@ -30,6 +30,8 @@ public:
 	~AutoCompleter();
 
 	static void AddWord(std::string word);
+	static void EraseWord(std::string word);
+	static bool Contains(std::string word);
 	static std::vector<std::string> Complete(std::string word);
 
 	static const std::vector<std::string> GetAddedWords();
