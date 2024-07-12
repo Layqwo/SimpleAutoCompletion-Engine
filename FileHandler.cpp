@@ -16,10 +16,27 @@ void LoadAutoCompleter(std::string filePath) {
 }
 
 void UnloadAutoCompleter(std::string filePath) {
-	std::fstream file = std::fstream(filePath, std::ios::in | std::ios::out);
+	std::fstream file = std::fstream(filePath, std::ios::app);
 	if (file.is_open()) {
-		for (int i = 0; i < AutoCompleter::GetAddedWords().size(); i++)
-			file << AutoCompleter::GetAddedWords()[i] << '\n';
+		file.close();
+		file = std::fstream(filePath, std::ios::in | std::ios::out | std::ios::trunc);
+		std::vector<std::string> addedWords = AutoCompleter::GetAddedWords();
+		for (int i = 0; i < addedWords.size(); i++)
+			file << addedWords[i] << '\n';
+		file.close();
+	}
+	else {
+		throw std::exception();
+	}
+}
+
+void UnloadAutoCompleter(std::string filePath, std::vector<std::string> data) {
+	std::fstream file = std::fstream(filePath, std::ios::app);
+	if (file.is_open()) {
+		file.close();
+		file = std::fstream(filePath, std::ios::in | std::ios::out | std::ios::trunc);
+		for (int i = 0; i < data.size(); i++)
+			file << data[i] << '\n';
 		file.close();
 	}
 	else {
