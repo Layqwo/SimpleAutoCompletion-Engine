@@ -17,7 +17,7 @@ bool PrefixTreeNode::ContainsChild(char value) {
 	return m_Children.find(value) != m_Children.end();
 }
 
-PrefixTreeNode* PrefixTreeNode::GetChild(char value, bool checkContains) {
+PrefixTreeNode* PrefixTreeNode::GetChild(char value) {
 	return m_Children[value];
 }
 
@@ -84,6 +84,10 @@ std::vector<std::string> AutoCompleter::Complete(std::string word) {
 	std::vector<std::string> ans = std::vector<std::string>();
 	AutoCompleter::Complete(m_Root, ans, word, std::string(""), 0);
 	return ans;
+}
+
+const std::vector<std::string>& AutoCompleter::GetAddedWords() {
+	return m_WordsAdded;
 }
 
 

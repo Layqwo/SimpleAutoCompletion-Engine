@@ -4,17 +4,17 @@
 #include <vector>
 
 class PrefixTreeNode {
+	friend class AutoCompleter;
 private:
 	char m_Value;
-
-public:
 	std::unordered_map<char, PrefixTreeNode*> m_Children;
+
 	PrefixTreeNode();
 	PrefixTreeNode(char value);
 
 	PrefixTreeNode* AddChild(char value);
 	bool ContainsChild(char value);
-	PrefixTreeNode* GetChild(char value, bool checkContains = true);
+	PrefixTreeNode* GetChild(char value);
 };
 
 class AutoCompleter {
@@ -30,5 +30,7 @@ public:
 
 	static void AddWord(std::string word);
 	static std::vector<std::string> Complete(std::string word);
+
+	static const std::vector<std::string>& GetAddedWords();
 };
 
